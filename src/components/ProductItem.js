@@ -5,10 +5,12 @@ import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../redux/stores'; // Ensure this path is correct
+import { addToCart } from '../redux/stores';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 const ProductItem = ({ product }) => {
+  const theme = useTheme();
   const [rating, setRating] = useState(product?.rating || 0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -20,7 +22,7 @@ const ProductItem = ({ product }) => {
   };
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // Prevent click event from triggering card click
+    e.stopPropagation();
     if (product) {
       dispatch(addToCart(product));
       setSnackbarMessage(`${product.name} added to cart!`);
@@ -29,7 +31,7 @@ const ProductItem = ({ product }) => {
   };
 
   const handleCardClick = () => {
-    navigate(`/product/${product.id}`); // Navigate to product details page
+    navigate(`/product/${product.id}`);
   };
 
   const handleCloseSnackbar = () => {
@@ -46,14 +48,18 @@ const ProductItem = ({ product }) => {
         sx={{ 
           display: 'flex', 
           flexDirection: 'column', 
-          borderRadius: 2, 
-          boxShadow: 3, 
+          borderRadius: 3, 
+          boxShadow: 4, 
           transition: '0.3s', 
+          cursor: 'pointer',
+          backgroundColor: theme.palette.background.default,
           '&:hover': { 
-            boxShadow: 6, 
-            transform: 'scale(1.02)' 
+            boxShadow: 8, 
+            transform: 'scale(1.05)', 
+            backgroundColor: theme.palette.action.hover 
           },
-          cursor: 'pointer' 
+          maxWidth: 300,
+          overflow: 'hidden'
         }} 
         onClick={handleCardClick}
       >
@@ -63,20 +69,23 @@ const ProductItem = ({ product }) => {
             image={product.imageUrl}
             alt={product.name}
             sx={{ 
-              height: 200, 
+              height: 250, 
               objectFit: 'cover', 
-              width: '100%' 
+              width: '100%', 
+              borderTopLeftRadius: 12, 
+              borderTopRightRadius: 12 
             }}
           />
         ) : (
           <CardMedia
             component="div"
             sx={{ 
-              height: 200, 
+              height: 250, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center', 
-              backgroundColor: '#f0f0f0' 
+              backgroundColor: theme.palette.grey[300],
+              width: '100%'
             }}
           >
             <Typography align="center" color="text.secondary">
@@ -84,18 +93,17 @@ const ProductItem = ({ product }) => {
             </Typography>
           </CardMedia>
         )}
-        <CardContent>
+        <CardContent sx={{ padding: 2, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
           <Typography 
             variant="h6" 
-            component="div" 
-            sx={{ mb: 1, fontWeight: 'bold' }}
+            sx={{ fontWeight: 'bold', color: theme.palette.text.primary, mb: 1 }}
           >
             {product.name || 'No Name'}
           </Typography>
           <Typography 
             variant="body2" 
             color="text.secondary"
-            sx={{ mb: 1 }}
+            sx={{ mb: 1, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}
           >
             {product.description || 'No Description'}
           </Typography>
@@ -109,27 +117,25 @@ const ProductItem = ({ product }) => {
           >
             <Typography 
               variant="h6" 
-              sx={{ fontWeight: 'bold' }}
+              sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}
             >
               KSh {product.price || '0.00'}
             </Typography>
             <IconButton 
               onClick={handleAddToCart} 
-              sx={{ color: 'primary.main' }}
+              sx={{ color: theme.palette.secondary.main }}
             >
               <ShoppingCartIcon />
             </IconButton>
           </Box>
-          <Box sx={{ mt: 1 }}>
-            <Rating
-              name="product-rating"
-              value={rating}
-              onChange={handleRatingChange}
-              precision={0.5}
-              icon={<StarIcon fontSize="inherit" />}
-              emptyIcon={<StarBorderIcon fontSize="inherit" />}
-            />
-          </Box>
+          <Rating
+            name="product-rating"
+            value={rating}
+            onChange={handleRatingChange}
+            precision={0.5}
+            icon={<StarIcon fontSize="inherit" />}
+            emptyIcon={<StarBorderIcon fontSize="inherit" />}
+          />
         </CardContent>
       </Card>
       <Snackbar

@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import { AppBar, Toolbar, IconButton, Typography, Button, Drawer, List, ListItem, ListItemText, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import HomeIcon from '@mui/icons-material/Home';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import Box from '@mui/material/Box';
 
-const Header = ({ onSearch }) => {
+const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const theme = useTheme();
@@ -29,9 +23,7 @@ const Header = ({ onSearch }) => {
     return () => unsubscribe();
   }, []);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const handleLogout = async () => {
     try {
@@ -44,43 +36,93 @@ const Header = ({ onSearch }) => {
   };
 
   return (
-    <AppBar position="sticky" sx={{ 
-      backgroundColor: 'transparent', 
-      boxShadow: 'none', 
-      backdropFilter: 'blur(10px)',
-    }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <IconButton size="large" edge="start" color="inherit" aria-label="menu" onClick={toggleMenu} sx={{ mr: 2 }}>
+    <AppBar 
+      position="sticky" 
+      sx={{ 
+        backgroundColor: theme.palette.background.paper, 
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '0px',
+        padding: '8px 16px',
+      }}
+    >
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Menu Button */}
+        <IconButton size="large" edge="start" color="primary" onClick={toggleMenu} sx={{ mr: 2 }}>
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center', color: 'pink' ,fontFamily:'revert-layer' ,fontWeight:'bolder' ,fontSize:'40px'}}>
-          <Link to="/" style={{ textDecoration: 'none', color: 'pink' }}>acrylic alchemy</Link>
+
+        {/* Logo / Title */}
+        <Typography 
+          variant="h5" 
+          component="div" 
+          sx={{ 
+            flexGrow: 1, 
+            textAlign: 'center', 
+            color: theme.palette.primary.main,
+            fontWeight: 'bold',
+            fontFamily: 'Poppins, sans-serif'
+          }}
+        >
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>mediGO</Link>
         </Typography>
+
+        {/* Cart & Logout */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton component={Link} to="/cart" color="inherit" sx={{ ml: 2 }}>
+          <IconButton component={Link} to="/cart" color="primary" sx={{ ml: 2 }}>
             <ShoppingCartIcon />
           </IconButton>
           {isLoggedIn && (
-            <Button color="inherit" onClick={handleLogout} sx={{ ml: 2 }}>
+            <Button variant="contained" color="secondary" onClick={handleLogout} sx={{ ml: 2 }}>
               Logout
             </Button>
           )}
         </Box>
       </Toolbar>
+
+      {/* Drawer Menu (Now Matches Navbar Theme) */}
       <Drawer anchor="left" open={menuOpen} onClose={() => setMenuOpen(false)}>
-        <List sx={{ backgroundColor: 'pink', width: '250px', color: theme.palette.primary.contrastText }}>
-          <ListItem button component={Link} to="/" onClick={() => setMenuOpen(false)}>
-            <ListItemText primary="HOME" />
-          </ListItem>
-          <ListItem button component={Link} to="/gallery" onClick={() => setMenuOpen(false)}>
-            <ListItemText primary="SHOP" />
-          </ListItem>
-          <ListItem button component={Link} to="/cart" onClick={() => setMenuOpen(false)}>
-            <ListItemText primary="CART" />
-          </ListItem>
-          <ListItem button onClick={() => setMenuOpen(false)}>
-            <ListItemText primary="HELP" />
-          </ListItem>
+        <List
+          sx={{
+            backgroundColor: theme.palette.background.paper, // Matches Navbar
+            width: '250px',
+            color: theme.palette.text.primary, // Matches Navbar text color
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: '10px',
+          }}
+        >
+          {[
+            { text: 'Home', icon: <HomeIcon />, link: '/' },
+            { text: 'Shop', icon: <StorefrontIcon />, link: '/shop' },
+            { text: 'Cart', icon: <ShoppingCartIcon />, link: '/cart' },
+            { text: 'Help', icon: <HelpOutlineIcon />, link: '#' },
+          ].map(({ text, icon, link }) => (
+            <ListItem
+              button
+              component={Link}
+              to={link}
+              key={text}
+              onClick={() => setMenuOpen(false)}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                padding: '12px 16px',
+                borderRadius: '8px',
+                transition: 'all 0.3s',
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover, // Subtle hover effect
+                  color: theme.palette.primary.main,
+                },
+              }}
+            >
+              {icon}
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
         </List>
       </Drawer>
     </AppBar>

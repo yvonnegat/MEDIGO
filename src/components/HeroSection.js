@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import "../App.css";
-import { Container, Typography, Button, Box,  Paper } from '@mui/material';
+import { Container, Typography, Button, Paper } from '@mui/material';
+import capsuleImg from '../assets/3d-capsule (2).png'; // Ensure this image follows a soft 3D claymorphic style
 
 const HeroSection = () => {
-
   return (
     <section className="hero-section">
       <Container
@@ -13,10 +12,10 @@ const HeroSection = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '100vh', // Full viewport height
+          height: '400px',
           textAlign: 'center',
           padding: '0 20px',
-         
+          position: 'relative',
         }}
       >
         <Paper
@@ -26,73 +25,92 @@ const HeroSection = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '100%',
-            height: '100%',
-            backgroundImage: 'url("https://d5wt70d4gnm1t.cloudfront.net/media/a-s/artworks/annabel-andrews/72864-749520043119/annabel-andrews-2-hb-800x800.jpg")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            color: 'white',
-            padding: '40px 20px',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
+            width: '90%',
+            maxWidth: '1200px',
+            padding: '40px',
+            borderRadius: '20px',
+            background: 'linear-gradient(145deg, #EDE8DC, #C1CFA1)',
+            boxShadow: '6px 6px 12px #bebebe, -6px -6px 12px #ffffff',
+            overflow: 'hidden',
           }}
-          elevation={3}
+          elevation={0}
         >
-          <Box
-            sx={{
+          {/* Floating Capsules - Mirrored Effect */}
+          <img 
+            src={capsuleImg} 
+            alt="3D Capsule Left" 
+            className="floating-capsule" 
+            style={{
               position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 1,
+              top: '10%',
+              left: '10%',
+              width: '400px',
+              height: 'auto',
+              filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.2))',
+              transform: 'scaleX(-1)', // Mirroring effect
+              animation: 'floatCapsule 4s infinite ease-in-out',
             }}
           />
+          <img 
+            src={capsuleImg} 
+            alt="3D Capsule Right" 
+            className="floating-capsule" 
+            style={{
+              position: 'absolute',
+              top: '10%',
+              right: '10%',
+              width: '400px',
+              height: 'auto',
+              filter: 'drop-shadow(4px 4px 10px rgba(0,0,0,0.2))',
+              animation: 'floatCapsule 4s infinite ease-in-out',
+            }}
+          />
+
           <div className="hero-content" style={{ position: 'relative', zIndex: 2 }}>
             <Typography 
-              variant="h1"
+              variant="h2"
               sx={{
-                fontFamily: 'Playfair Display, serif',
+                fontFamily: 'Poppins, sans-serif',
                 fontWeight: 'bold',
-                fontSize: '3.5rem',
-                lineHeight: '1.2',
-                color: 'white',
+                fontSize: '3rem',
+                color: '#B17F59',
                 mb: 2,
+                textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
                 '@media (max-width: 600px)': {
-                  fontSize: '2.5rem',
+                  fontSize: '2rem',
                 }
               }}
             >
-              Acrylic Alchemy
+              Your Trusted Online Pharmacy
             </Typography>
             <Typography 
               variant="body1"
               sx={{
                 fontFamily: 'Lora, serif',
                 fontSize: '1.25rem',
-                color: 'white',
+                color: '#5C5C5C',
                 mb: 4,
                 '@media (max-width: 600px)': {
                   fontSize: '1rem',
                 }
               }}
             >
-              Discover beautiful paintings to decorate your space.
+              Quality medicines, trusted healthcare, delivered to your doorstep.
             </Typography>
             <Button 
-              className='btn'
               component={Link}
-              to="/gallery"
+              to="/shop"
               variant="contained"
               sx={{
-                background: 'linear-gradient(45deg, #FF6F61, #D5AAFF)', // Gradient background
-                color: 'white',
+                background: 'linear-gradient(145deg, #A5B68D, #C1CFA1)',
+                color: '#5C5C5C',
                 padding: '12px 24px',
                 fontSize: '1.125rem',
                 borderRadius: '50px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+                boxShadow: '4px 4px 8px #a1a1a1, -4px -4px 8px #ffffff',
                 textTransform: 'none',
                 '&:hover': {
-                  background: 'linear-gradient(45deg, #D5AAFF, #FF6F61)',
+                  background: 'linear-gradient(145deg, #C1CFA1, #A5B68D)',
                   transform: 'scale(1.05)',
                 },
                 '@media (max-width: 600px)': {
@@ -101,7 +119,7 @@ const HeroSection = () => {
                 }
               }}
             >
-              View Gallery
+              Shop Now
             </Button>
           </div>
         </Paper>

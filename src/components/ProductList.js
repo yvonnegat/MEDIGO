@@ -23,7 +23,6 @@ const ProductList = () => {
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, 'products', id));
-      console.log('Product deleted successfully');
       setProducts(products.filter(product => product.id !== id));
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -36,7 +35,6 @@ const ProductList = () => {
 
   const handleProductUpdated = () => {
     setProductToEdit(null);
-    // Fetch products again to update the list
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(collection(db, 'products'));
       const productList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -51,38 +49,44 @@ const ProductList = () => {
       {productToEdit && (
         <ProductUpload productToEdit={productToEdit} onProductUpdated={handleProductUpdated} />
       )}
-      <Typography variant="h6" gutterBottom sx={{ marginBottom: 2, color: theme.palette.primary.main }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ marginBottom: 3, fontWeight: 'bold', color: theme.palette.primary.main }}
+      >
         Product List
       </Typography>
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         {products.map(product => (
           <Grid item xs={12} sm={6} md={4} key={product.id}>
-            <Card sx={{ display: 'flex', flexDirection: 'column' }}>
-              {product.imageUrl && (
+            <Card sx={{ display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: 4 }}>
+              {product.imageUrl ? (
                 <CardMedia
                   component="img"
                   image={product.imageUrl}
                   alt={product.name}
-                  sx={{ height: 140 }}
+                  sx={{ height: 160, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
                 />
+              ) : (
+                <CardContent sx={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: theme.palette.grey[300] }}>
+                  <Typography>No Image Available</Typography>
+                </CardContent>
               )}
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {product.description}
-                </Typography>
-                <Typography variant="h6" sx={{ marginTop: 1 }}>
-                  ${product.price}
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{product.name}</Typography>
+                <Typography variant="body2" color="text.secondary">{product.description}</Typography>
+                <Typography variant="h6" sx={{ marginTop: 1, color: theme.palette.primary.main }}>
+                  KSh {product.price}
                 </Typography>
               </CardContent>
-              <Button variant="contained" sx={{ margin: 1, backgroundColor: theme.palette.primary.main }} onClick={() => handleEdit(product)}>
-                Edit
-              </Button>
-              <Button variant="contained" sx={{ margin: 1, backgroundColor: theme.palette.error.main }} onClick={() => handleDelete(product.id)}>
-                Delete
-              </Button>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: 2 }}>
+                <Button variant="contained" onClick={() => handleEdit(product)}>
+                  Edit
+                </Button>
+                <Button variant="contained" color="error" onClick={() => handleDelete(product.id)}>
+                  Delete
+                </Button>
+              </Box>
             </Card>
           </Grid>
         ))}

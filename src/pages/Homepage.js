@@ -1,18 +1,30 @@
-// pages/HomePage.js
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Header from "../components/Header";
 import HeroSection from '../components/HeroSection';
-import FeaturedPainting from '../components/FeaturedPainting';
+import FeaturedMedicine from '../components/FeaturedMedicine';
 import Footer from '../components/Footer';
+import CategoryNavbar from '../components/CategoryNavbar';
 
 const HomePage = ({ isFirstVisit }) => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const categoryRefs = useRef({});
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+
+    // Scroll to the selected category section if it exists
+    if (categoryRefs.current[category]) {
+      categoryRefs.current[category].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div>
       <Header />
       {isFirstVisit && <div>Welcome to our site! Please sign up to get started.</div>}
       <HeroSection />
-      <FeaturedPainting />
-      
+      <CategoryNavbar onSelectCategory={handleCategorySelect} categoryRefs={categoryRefs} />
+      <FeaturedMedicine selectedCategory={selectedCategory} categoryRefs={categoryRefs} />
       <Footer />
     </div>
   );

@@ -1,5 +1,5 @@
 // src/data/PaintingData.js
-export const featuredPaintings = [
+export const featuredMedicines = [
   {
     id: 1,
     title: "Starry Night",
@@ -302,7 +302,7 @@ export const featuredPaintings = [
   }
 ];
 
-export const topPaintings = [
+export const topMedicines = [
   {
     id: 26,
     title: "The Night Watch",

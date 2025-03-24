@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebaseConfig';
 import { doc, getDoc, collection, query, getDocs } from 'firebase/firestore';
-import { Box, Typography, Card, CardMedia, CardContent, Button, Container, Grid, Snackbar, Alert } from '@mui/material';
+import { 
+  Box, Typography, Card, CardMedia, CardContent, Button, 
+  Container, Grid, Snackbar, Alert 
+} from '@mui/material';
 import ProductItem from '../components/ProductItem';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../redux/stores'; // Ensure this path is correct
+import { addToCart } from '../redux/stores'; 
 import Header from './Header';
 import Footer from './Footer';
 
@@ -42,7 +45,7 @@ const ProductDetails = () => {
       const q = query(collection(db, 'products'));
       const querySnapshot = await getDocs(q);
       const products = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setRelatedProducts(products.filter(p => p.id !== id)); // Exclude the current product
+      setRelatedProducts(products.filter(p => p.id !== id)); 
     };
 
     fetchProduct();
@@ -55,7 +58,12 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <Container>
-        <Typography variant="h6" align="center" color="text.secondary" sx={{ marginTop: 4 }}>
+        <Typography 
+          variant="h6" 
+          align="center" 
+          color="text.secondary" 
+          sx={{ marginTop: 4, fontStyle: 'italic' }}
+        >
           Loading...
         </Typography>
       </Container>
@@ -63,60 +71,99 @@ const ProductDetails = () => {
   }
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#EDE8DC' }}>
       <Header />
       <Container maxWidth="md">
         <Box sx={{ padding: 4 }}>
-          <Card sx={{ display: 'flex', flexDirection: 'column', boxShadow: 3, borderRadius: 2 }}>
+          <Card sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            boxShadow: '6px 6px 12px #C1CFA1, -6px -6px 12px #ffffff', 
+            borderRadius: '20px',
+            backgroundColor: '#C1CFA1', 
+            color: '#3A3A3A',
+            overflow: 'hidden',
+            padding: 3
+          }}>
             {product.imageUrl ? (
               <CardMedia
                 component="img"
                 image={product.imageUrl}
                 alt={product.name}
                 sx={{ 
-                  height: 400, 
-                  objectFit: 'contain', // Ensure the image fits within the container
-                  width: '100%', 
-                  maxWidth: '100%', 
-                  display: 'block' 
+                  height: 350, 
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: 'inset 4px 4px 8px #A5B68D, inset -4px -4px 8px #ffffff'
                 }}
               />
             ) : (
-              <CardMedia
-                component="div"
-                sx={{ 
-                  height: 400, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  backgroundColor: '#f0f0f0' 
-                }}
-              >
-                <Typography align="center" color="text.secondary">
+              <Box sx={{ 
+                height: 350, 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: '#A5B68D',
+                borderRadius: '12px'
+              }}>
+                <Typography align="center" color="white">
                   No Image Available
                 </Typography>
-              </CardMedia>
+              </Box>
             )}
             <CardContent>
-              <Typography variant="h4" gutterBottom>
+              <Typography 
+                variant="h4" 
+                gutterBottom
+                sx={{ fontWeight: 'bold', color: '#B17F59' }}
+              >
                 {product.name || 'No Name'}
               </Typography>
-              <Typography variant="body1" color="text.secondary" paragraph>
+              <Typography variant="body1" paragraph>
                 {product.description || 'No Description'}
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Artist: {product.artistName || 'Unknown Artist'}
+              <Typography variant="body1">
+                Manufacturer: <span style={{ fontWeight: 'bold' }}>{product.manufacturerName || 'N/A'}</span>
               </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Contact: {product.artistPhoneNumber || 'N/A'}
+              <Typography variant="body1">
+                Expiry Date: <span style={{ fontWeight: 'bold' }}>{product.expiryDate || 'N/A'}</span>
               </Typography>
-              <Typography variant="h5" color="primary" sx={{ marginTop: 2 }}>
+              <Typography variant="body1">
+                Category: <span style={{ fontWeight: 'bold' }}>{product.category || 'N/A'}</span>
+              </Typography>
+              <Typography variant="body1">
+                Size: <span style={{ fontWeight: 'bold' }}>{product.size || 'N/A'}</span>
+              </Typography>
+              <Typography variant="body1">
+                Stock Number: <span style={{ fontWeight: 'bold' }}>{product.stockQuantity || 'N/A'}</span>
+              </Typography>
+              <Typography variant="body1">
+                Availability: <span style={{ fontWeight: 'bold' }}>{product.availability ? 'In Stock' : 'Out of Stock'}</span>
+              </Typography>
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  marginTop: 2, 
+                  color: '#A5B68D', 
+                  fontWeight: 'bold' 
+                }}
+              >
                 KSh {product.price || '0.00'}
               </Typography>
               <Button
                 variant="contained"
-                color="primary"
-                sx={{ marginTop: 3, width: '100%', padding: 1.5 }}
+                sx={{ 
+                  marginTop: 3, 
+                  width: '100%', 
+                  padding: 1.5, 
+                  fontSize: '1.1rem',
+                  borderRadius: '12px',
+                  backgroundColor: '#B17F59',
+                  boxShadow: '4px 4px 8px #A5B68D, -4px -4px 8px #ffffff',
+                  '&:hover': {
+                    backgroundColor: '#A5B68D'
+                  }
+                }}
                 onClick={handleAddToCart}
               >
                 Add to Cart
@@ -125,7 +172,7 @@ const ProductDetails = () => {
           </Card>
 
           <Box sx={{ marginTop: 4 }}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#B17F59' }}>
               OTHER PRODUCTS
             </Typography>
             <Grid container spacing={3}>
@@ -139,7 +186,6 @@ const ProductDetails = () => {
         </Box>
       </Container>
 
-      {/* Snackbar Component */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -153,7 +199,7 @@ const ProductDetails = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

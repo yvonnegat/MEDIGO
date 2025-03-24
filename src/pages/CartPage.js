@@ -33,7 +33,12 @@ const CartPage = () => {
   };
 
   const handleCheckout = () => {
-    navigate('/checkout');
+    const token = localStorage.getItem('token'); // Check if user is logged in
+    if (!token) {
+      navigate('/login'); // Redirect to login if not authenticated
+    } else {
+      navigate('/checkout'); // Proceed to checkout if logged in
+    }
   };
 
   return (
@@ -73,7 +78,7 @@ const CartPage = () => {
               variant="contained"
               color="primary"
               component={Link}
-              to="/gallery"
+              to="/shop"
               style={{ marginTop: '20px', backgroundColor: theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.primary.main) }}
             >
               Start Shopping
