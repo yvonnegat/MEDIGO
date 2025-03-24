@@ -53,7 +53,7 @@ const CheckoutPage = () => {
     if (paymentMethod === 'mpesa') {
       handleOpenMpesaDialog();
     } else {
-      placeOrder();
+      placeOrder(user, shippingInfo, paymentMethod, paymentInfo, cart, calculateTotalPrice, setSnackbarMessage, setOpenSnackbar);
     }
   };
 
@@ -65,36 +65,43 @@ const CheckoutPage = () => {
     setOpenMpesaDialog(false);
   };
 
-  const placeOrder = async () => {
+  const placeOrder = async (user, shippingInfo, paymentMethod, paymentInfo, cart, calculateTotalPrice, setSnackbarMessage, setOpenSnackbar) => {
     try {
-      // Create a transaction object
-      const transactionData = {
-        userId: getAuth().currentUser.uid,
+      const auth = getAuth();
+      const userId = auth.currentUser.uid;
+      const orderId = `order_${Date.now()}`;  // Unique order ID
+  
+      // Order Data
+      const orderData = {
+        userId,
         userName: user.name,
         userEmail: user.email,
         shippingInfo,
         paymentMethod,
-        paymentInfo: paymentMethod === 'creditCard' ? paymentInfo : {},
+        paymentInfo: paymentMethod === "creditCard" ? paymentInfo : {},
         cart,
         totalPrice: calculateTotalPrice(),
         timestamp: Timestamp.fromDate(new Date()),
+        status: "pending", // Default status
       };
-
-      // Save the transaction to Firestore
-      await setDoc(doc(db, 'users', getAuth().currentUser.uid, 'transactions', `transaction_${Date.now()}`), transactionData);
-
+  
+      // Save to User's Transactions
+      await setDoc(doc(db, "users", userId, "transactions", orderId), orderData);
+  
+      // Save to Global Orders Collection
+      await setDoc(doc(db, "orders", orderId), orderData);
+  
       // Show success message
-      setSnackbarMessage('Order placed successfully');
+      setSnackbarMessage("Order placed successfully");
       setOpenSnackbar(true);
-      console.log('Order placed successfully');
-      // You may want to clear the cart or redirect the user here
+      console.log("Order placed successfully");
+  
     } catch (error) {
-      console.error('Error placing order:', error);
-      setSnackbarMessage('Error placing order');
+      console.error("Error placing order:", error);
+      setSnackbarMessage("Error placing order");
       setOpenSnackbar(true);
     }
   };
-
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };

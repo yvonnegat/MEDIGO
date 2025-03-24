@@ -97,6 +97,7 @@ const Header = () => {
           {[
             { text: 'Home', icon: <HomeIcon />, link: '/' },
             { text: 'Shop', icon: <StorefrontIcon />, link: '/shop' },
+            { text: 'Order History', icon: <ShoppingCartIcon />, link: '/order-history' },
             { text: 'Cart', icon: <ShoppingCartIcon />, link: '/cart' },
             { text: 'Help', icon: <HelpOutlineIcon />, link: '#' },
           ].map(({ text, icon, link }) => (

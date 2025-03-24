@@ -3,6 +3,7 @@ import { Container, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ProductUpload from '../components/ProductUpload';
 import ProductList from '../components/ProductList';
+import AdminOrders from '../components/AdminOrders';
 
 const AdminDashboardPage = () => {
   const theme = useTheme();
@@ -16,6 +17,8 @@ const AdminDashboardPage = () => {
         <ProductUpload />
       </Box>
       <ProductList />
+
+      <AdminOrders/>
     </Container>
   );
 };

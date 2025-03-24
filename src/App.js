@@ -15,6 +15,7 @@ import ContactPage from './pages/ContactPage';
 import ProductDetails from './components/ProductDetails';
 import ShopPage from './pages/ShopPage';
 import theme from './theme';
+import OrderHistory from './pages/OrderHistory';
 
 const App = () => {
   const [isFirstVisit, setIsFirstVisit] = useState(false);
@@ -96,6 +97,7 @@ const App = () => {
           <Route path="/profile" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/admin" element={isLoggedIn ? <AdminDashboardPage /> : <Navigate to="/login" />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path='/order-history' element={<OrderHistory/>}/>
         </Routes>
       </Router>
     </ThemeProvider>
