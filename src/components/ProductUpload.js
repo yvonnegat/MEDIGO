@@ -19,7 +19,7 @@ const featuredCategories = [
   { value: 'see-more', label: 'See More' }
 ];
 
-const ProductUpload = ({ productToEdit, onProductUpdated }) => {
+const ProductUpload = ({ productToEdit, onProductUpdated, pharmacyId }) => {
   const theme = useTheme();
   const [productData, setProductData] = useState({
     name: '',
@@ -43,17 +43,8 @@ const ProductUpload = ({ productToEdit, onProductUpdated }) => {
       setImagePreview(productToEdit.imageUrl);
     } else {
       setProductData({
-        name: '',
-        description: '',
-        price: '',
-        imageUrl: '',
-        manufacturerName: '',
-        batchNumber: '',
-        expiryDate: '',
-        stockQuantity: '',
-        category: '',
-        size: '',
-        featuredCategory: ''
+        name: '', description: '', price: '', imageUrl: '', manufacturerName: '',
+        batchNumber: '', expiryDate: '', stockQuantity: '', category: '', size: '', featuredCategory: ''
       });
       setImagePreview('');
     }
@@ -67,7 +58,6 @@ const ProductUpload = ({ productToEdit, onProductUpdated }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImageFile(file);
-
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
@@ -77,7 +67,10 @@ const ProductUpload = ({ productToEdit, onProductUpdated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!pharmacyId) {
+      console.error('Pharmacy ID is missing. Aborting submission.');
+      return;
+    }
     try {
       const price = parseFloat(productData.price) || 0;
       let imageUrl = productData.imageUrl;
@@ -88,28 +81,29 @@ const ProductUpload = ({ productToEdit, onProductUpdated }) => {
         imageUrl = await getDownloadURL(imageRef);
       }
 
+      const productPayload = {
+        ...productData,
+        price,
+        imageUrl,
+        pharmacyId
+      };
+
       if (productToEdit) {
         const productRef = doc(db, 'products', productToEdit.id);
-        await updateDoc(productRef, { ...productData, price, imageUrl });
+        await updateDoc(productRef, productPayload);
         console.log('Product updated successfully');
       } else {
-        await addDoc(collection(db, 'products'), { ...productData, price, imageUrl });
+        await addDoc(collection(db, 'products'), productPayload);
         console.log('Product added successfully');
       }
 
-      onProductUpdated();
+      if (onProductUpdated) {
+        onProductUpdated();
+      }
+
       setProductData({
-        name: '',
-        description: '',
-        price: '',
-        imageUrl: '',
-        manufacturerName: '',
-        batchNumber: '',
-        expiryDate: '',
-        stockQuantity: '',
-        category: '',
-        size: '',
-        featuredCategory: ''
+        name: '', description: '', price: '', imageUrl: '', manufacturerName: '',
+        batchNumber: '', expiryDate: '', stockQuantity: '', category: '', size: '', featuredCategory: ''
       });
       setImagePreview('');
       setImageFile(null);
@@ -119,80 +113,24 @@ const ProductUpload = ({ productToEdit, onProductUpdated }) => {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        padding: 3,
-        backgroundColor: theme.palette.background.paper,
-        borderRadius: 2,
-        boxShadow: 1,
-        maxWidth: 600,
-        margin: 'auto',
-      }}
-    >
-      <Typography variant="h6" sx={{ marginBottom: 3, fontWeight: 'bold' }}>
-        {productToEdit ? 'Edit Medicine' : 'Upload New Medicine'}
-      </Typography>
-
-      <TextField name="name" label="Medicine Name" fullWidth margin="normal" value={productData.name} onChange={handleChange} required variant="outlined" />
-      <TextField name="description" label="Description" fullWidth margin="normal" value={productData.description} onChange={handleChange} required variant="outlined" />
-      <TextField name="price" label="Price" fullWidth margin="normal" value={productData.price} onChange={handleChange} required type="number" variant="outlined" />
-
-      <TextField
-        select
-        name="category"
-        label="Category"
-        fullWidth
-        margin="normal"
-        value={productData.category}
-        onChange={handleChange}
-        required
-        variant="outlined"
-      >
-        {categories.map((category) => (
-          <MenuItem key={category} value={category}>
-            {category}
-          </MenuItem>
-        ))}
+    <Box component="form" onSubmit={handleSubmit}>
+      <TextField name="name" label="Product Name" value={productData.name} onChange={handleChange} fullWidth required sx={{ mb: 2 }} />
+      <TextField name="description" label="Description" value={productData.description} onChange={handleChange} fullWidth required multiline rows={3} sx={{ mb: 2 }} />
+      <TextField name="price" label="Price" type="number" value={productData.price} onChange={handleChange} fullWidth required sx={{ mb: 2 }} />
+      <TextField name="manufacturerName" label="Manufacturer Name" value={productData.manufacturerName} onChange={handleChange} fullWidth required sx={{ mb: 2 }} />
+      <TextField name="batchNumber" label="Batch Number" value={productData.batchNumber} onChange={handleChange} fullWidth required sx={{ mb: 2 }} />
+      <TextField name="expiryDate" label="Expiry Date" type="date" value={productData.expiryDate} onChange={handleChange} fullWidth required sx={{ mb: 2 }} />
+      <TextField name="stockQuantity" label="Stock Quantity" type="number" value={productData.stockQuantity} onChange={handleChange} fullWidth required sx={{ mb: 2 }} />
+      <TextField select name="category" label="Category" value={productData.category} onChange={handleChange} fullWidth required sx={{ mb: 2 }}>
+        {categories.map((option) => <MenuItem key={option} value={option}>{option}</MenuItem>)}
       </TextField>
-
-      <TextField
-        select
-        name="featuredCategory"
-        label="Featured Category"
-        fullWidth
-        margin="normal"
-        value={productData.featuredCategory}
-        onChange={handleChange}
-        variant="outlined"
-      >
-        {featuredCategories.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
+      <TextField select name="featuredCategory" label="Featured Category" value={productData.featuredCategory} onChange={handleChange} fullWidth sx={{ mb: 2 }}>
+        {featuredCategories.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
       </TextField>
-
-      <TextField name="size" label="Size" fullWidth margin="normal" value={productData.size} onChange={handleChange} required variant="outlined" />
-      <TextField name="manufacturerName" label="Manufacturer" fullWidth margin="normal" value={productData.manufacturerName} onChange={handleChange} variant="outlined" />
-      <TextField name="batchNumber" label="Batch Number" fullWidth margin="normal" value={productData.batchNumber} onChange={handleChange} variant="outlined" />
-      <TextField name="expiryDate" label="Expiry Date" fullWidth margin="normal" value={productData.expiryDate} onChange={handleChange} type="date" variant="outlined" InputLabelProps={{ shrink: true }} />
-      <TextField name="stockQuantity" label="Stock Quantity" fullWidth margin="normal" value={productData.stockQuantity} onChange={handleChange} required type="number" variant="outlined" />
-
-      <input type="file" accept="image/*" onChange={handleFileChange} style={{ margin: '16px 0', display: 'block' }} />
-
-      {imagePreview && (
-        <Box sx={{ marginTop: 2 }}>
-          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>Image Preview:</Typography>
-          <Box sx={{ height: 200, overflow: 'hidden', borderRadius: 4, backgroundColor: '#f0f0f0' }}>
-            <img src={imagePreview} alt="Product Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </Box>
-        </Box>
-      )}
-
-      <Button type="submit" variant="contained" sx={{ marginTop: 3, backgroundColor: theme.palette.primary.main, '&:hover': { backgroundColor: theme.palette.primary.dark } }}>
-        {productToEdit ? 'Update Medicine' : 'Add Medicine'}
+      <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'block', marginBottom: '16px' }} />
+      {imagePreview && <img src={imagePreview} alt="Product Preview" style={{ maxWidth: '100%', maxHeight: '150px', marginBottom: '16px' }} />}
+      <Button type="submit" variant="contained" color="primary" fullWidth>
+        {productToEdit ? 'Update Product' : 'Upload Product'}
       </Button>
     </Box>
   );

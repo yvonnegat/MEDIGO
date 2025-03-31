@@ -113,13 +113,14 @@ const CartPage = () => {
                       </TableCell>
                       <TableCell>${item.price}</TableCell>
                       <TableCell>
-                        <TextField
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item, parseInt(e.target.value))}
-                          inputProps={{ min: 1 }}
-                          style={{ width: '80px' }}
-                        />
+                      <TextField
+                        type="number"
+                        value={item.quantity ?? 1} // Ensure it's always at least 1
+                        onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 1)}
+                        inputProps={{ min: 1 }}
+                        style={{ width: '80px' }}
+                      />
+
                       </TableCell>
                       <TableCell>
                         <IconButton onClick={() => handleRemoveFromCart(item)}>

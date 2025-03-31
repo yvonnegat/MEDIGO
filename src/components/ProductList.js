@@ -2,23 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, CardMedia, Button, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { db } from '../firebaseConfig';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
 import ProductUpload from './ProductUpload';
 
-const ProductList = () => {
+const ProductList = ({ pharmacyId }) => {
   const theme = useTheme();
   const [products, setProducts] = useState([]);
   const [productToEdit, setProductToEdit] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const querySnapshot = await getDocs(collection(db, 'products'));
+      if (!pharmacyId) return;
+      const q = query(collection(db, 'products'), where('pharmacyId', '==', pharmacyId));
+      const querySnapshot = await getDocs(q);
       const productList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProducts(productList);
     };
 
     fetchProducts();
-  }, []);
+  }, [pharmacyId]);
 
   const handleDelete = async (id) => {
     try {
@@ -36,7 +38,9 @@ const ProductList = () => {
   const handleProductUpdated = () => {
     setProductToEdit(null);
     const fetchProducts = async () => {
-      const querySnapshot = await getDocs(collection(db, 'products'));
+      if (!pharmacyId) return;
+      const q = query(collection(db, 'products'), where('pharmacyId', '==', pharmacyId));
+      const querySnapshot = await getDocs(q);
       const productList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProducts(productList);
     };
