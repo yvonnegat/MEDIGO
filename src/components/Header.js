@@ -6,6 +6,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import HomeIcon from '@mui/icons-material/Home';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy';
+import HistoryIcon from '@mui/icons-material/History';
 import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
@@ -72,21 +74,25 @@ const Header = () => {
           <IconButton component={Link} to="/cart" color="primary" sx={{ ml: 2 }}>
             <ShoppingCartIcon />
           </IconButton>
-          {isLoggedIn && (
+          {isLoggedIn ? (
             <Button variant="contained" color="secondary" onClick={handleLogout} sx={{ ml: 2 }}>
               Logout
+            </Button>
+          ) : (
+            <Button component={Link} to="/login" variant="contained" color="primary" sx={{ ml: 2 }}>
+              Login
             </Button>
           )}
         </Box>
       </Toolbar>
 
-      {/* Drawer Menu (Now Matches Navbar Theme) */}
+      {/* Drawer Menu */}
       <Drawer anchor="left" open={menuOpen} onClose={() => setMenuOpen(false)}>
         <List
           sx={{
-            backgroundColor: theme.palette.background.paper, // Matches Navbar
+            backgroundColor: theme.palette.background.paper,
             width: '250px',
-            color: theme.palette.text.primary, // Matches Navbar text color
+            color: theme.palette.text.primary,
             height: '100vh',
             display: 'flex',
             flexDirection: 'column',
@@ -97,6 +103,8 @@ const Header = () => {
           {[
             { text: 'Home', icon: <HomeIcon />, link: '/' },
             { text: 'Shop', icon: <StorefrontIcon />, link: '/shop' },
+            { text: 'Submit Prescription', icon: <LocalPharmacyIcon />, link: '/submit-prescription' },
+            { text: 'My Prescriptions', icon: <HistoryIcon />, link: '/prescriptions' },
             { text: 'Order History', icon: <ShoppingCartIcon />, link: '/order-history' },
             { text: 'Cart', icon: <ShoppingCartIcon />, link: '/cart' },
             { text: 'Help', icon: <HelpOutlineIcon />, link: '#' },
@@ -115,7 +123,7 @@ const Header = () => {
                 borderRadius: '8px',
                 transition: 'all 0.3s',
                 '&:hover': {
-                  backgroundColor: theme.palette.action.hover, // Subtle hover effect
+                  backgroundColor: theme.palette.action.hover,
                   color: theme.palette.primary.main,
                 },
               }}

@@ -16,6 +16,8 @@ import ProductDetails from './components/ProductDetails';
 import ShopPage from './pages/ShopPage';
 import theme from './theme';
 import OrderHistory from './pages/OrderHistory';
+import SubmitPrescription from './components/SubmitPrescription';
+import PrescriptionHistory from './components/PrescriptionHistory';
 
 const App = () => {
   const [isFirstVisit, setIsFirstVisit] = useState(false);
@@ -98,6 +100,8 @@ const App = () => {
           <Route path="/admin" element={isLoggedIn ? <AdminDashboardPage /> : <Navigate to="/login" />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path='/order-history' element={<OrderHistory/>}/>
+          <Route path="/submit-prescription" element={<SubmitPrescription />} />
+          <Route path="/prescriptions" element={<PrescriptionHistory />} />
         </Routes>
       </Router>
     </ThemeProvider>
