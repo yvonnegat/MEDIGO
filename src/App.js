@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, CssBaseline, GlobalStyles, CircularProgress, Box } from '@mui/material';
-
-import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 import HomePage from './pages/Homepage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckOutPage';
@@ -16,6 +15,7 @@ import ProductDetails from './components/ProductDetails';
 import ShopPage from './pages/ShopPage';
 import theme from './theme';
 import OrderHistory from './pages/OrderHistory';
+import Chatbot from './components/Chatbot';
 
 const App = () => {
   const [isFirstVisit, setIsFirstVisit] = useState(false);
@@ -97,8 +97,11 @@ const App = () => {
           <Route path="/profile" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/admin" element={isLoggedIn ? <AdminDashboardPage /> : <Navigate to="/login" />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path='/order-history' element={<OrderHistory/>}/>
+          <Route path='/order-history' element={<OrderHistory />} />
         </Routes>
+        <Box sx={{ position: 'fixed', bottom: 0, right: 0, zIndex: 1300 }}>
+          <Chatbot />
+        </Box>
       </Router>
     </ThemeProvider>
   );
