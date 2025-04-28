@@ -25,25 +25,28 @@ const ContentWrapper = styled("div")({
   margin: "auto", // Centers content
 });
 
-// Styled Paper for Claymorphic Effect
+// Styled Paper for Metallic Effect
 const StyledPaper = styled(Paper)({
-  background: "#EDE8DC",
+  background: "#F4F2F3", // Light gray background for a soft look
   borderRadius: "20px",
   padding: "20px",
-  boxShadow: "6px 6px 12px rgba(177, 127, 89, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.8)",
+  boxShadow: "6px 6px 12px rgba(67, 91, 112, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.8)",
   width: "100%",
   maxWidth: "100%",
   overflowX: "auto", // Enables horizontal scroll if needed
+  border: "1px solid #94A7AE", // Subtle metallic border
 });
 
-// Styled Table Cell for Responsive Font Sizes
+// Styled Table Cell for Responsive Font Sizes and Metallic Styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  color: "#B17F59",
+  color: "#2C3E50", // Deep teal color for text
   fontWeight: "bold",
   fontSize: "16px",
   [theme.breakpoints.down("sm")]: {
     fontSize: "12px", // Smaller text on mobile
   },
+  backgroundColor: "#A5B68D", // Metallic greenish background for table headers
+  borderBottom: "1px solid #C0A9BD", // Light metallic border for separation
 }));
 
 const OrderHistory = () => {
@@ -74,13 +77,13 @@ const OrderHistory = () => {
       <Header />
       <ContentWrapper>
         <StyledPaper>
-          <Typography variant="h5" gutterBottom sx={{ color: "#A5B68D", fontWeight: "bold", textAlign: "center" }}>
+          <Typography variant="h5" gutterBottom sx={{ color: "#2C3E50", fontWeight: "bold", textAlign: "center" }}>
             Order History
           </Typography>
           <TableContainer sx={{ width: "100%", overflowX: "auto" }}>
             <Table>
               <TableHead>
-                <TableRow sx={{ backgroundColor: "#C1CFA1" }}>
+                <TableRow sx={{ backgroundColor: "#A5B68D" }}>
                   <StyledTableCell>Transaction ID</StyledTableCell>
                   <StyledTableCell>Product</StyledTableCell>
                   <StyledTableCell>Quantity</StyledTableCell>
@@ -95,7 +98,7 @@ const OrderHistory = () => {
                   const items = order.cart || order.items || [];
 
                   return items.map((item, index) => (
-                    <TableRow key={`${order.id}-${index}`} sx={{ backgroundColor: "#EDE8DC" }}>
+                    <TableRow key={`${order.id}-${index}`} sx={{ backgroundColor: "#F4F2F3" }}>
                       <TableCell>{index === 0 ? order.id : ""}</TableCell>
                       <TableCell>
                         <Box display="flex" alignItems="center" gap={1}>

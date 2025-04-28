@@ -1,35 +1,39 @@
+// src/theme.js
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#B17F59', // Warm brownish tone for primary actions
+      main: '#2FB8A0', // Calm soft teal for main actions (trust & freshness)
     },
     secondary: {
-      main: '#A5B68D', // Muted green for secondary actions
+      main: '#5C9EFF', // Cool, calming blue for secondary actions
     },
     background: {
-      default: '#EDE8DC', // Light neutral background for a clean look
-      paper: '#C1CFA1', // Soft green for subtle contrast
+      default: '#E6F5EA', // Light mint for healthy background
+      paper: '#FFFFFF', // Clean white for cards and content
     },
     text: {
-      primary: '#3D3D3D', // Dark gray for readability
-      secondary: '#5A5A5A',
+      primary: '#333333', // Crisp dark gray for main text
+      secondary: '#555555', // Slightly lighter for subtext
     },
   },
   typography: {
     fontFamily: `'Inter', sans-serif`,
     h1: {
-      fontSize: '2rem',
+      fontSize: '2.2rem',
       fontWeight: 700,
+      color: '#333333',
     },
     h2: {
-      fontSize: '1.75rem',
+      fontSize: '1.8rem',
       fontWeight: 600,
+      color: '#333333',
     },
     body1: {
       fontSize: '1rem',
       fontWeight: 400,
+      color: '#555555',
     },
     button: {
       textTransform: 'none',
@@ -37,14 +41,47 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#E6F5EA',
+          color: '#333333',
+          fontFamily: `'Inter', sans-serif`,
+          margin: 0,
+          padding: 0,
+          minHeight: '100vh',
+        },
+        h1: {
+          fontSize: '2.2rem',
+          fontWeight: 700,
+          color: '#333333',
+        },
+        h2: {
+          fontSize: '1.8rem',
+          fontWeight: 600,
+          color: '#333333',
+        },
+        p: {
+          fontSize: '1rem',
+          color: '#555555',
+        },
+        a: {
+          color: '#2FB8A0',
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: '20px', // Rounded for a soft claymorphic feel
+          borderRadius: '12px', // Professional soft button
           padding: '10px 20px',
-          boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+          boxShadow: 'none',
           '&:hover': {
-            boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.15)',
+            boxShadow: '0 0 8px rgba(47, 184, 160, 0.4)', // Teal glow
           },
         },
       },
@@ -53,9 +90,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '15px',
-          boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)', // Soft card shadow
+          backgroundColor: '#FFFFFF',
           padding: '20px',
-          backgroundColor: '#EDE8DC',
         },
       },
     },
@@ -66,14 +103,14 @@ const theme = createTheme({
           backgroundColor: '#fff',
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
-              borderColor: '#A5B68D',
+              borderColor: '#2FB8A0',
             },
             '&:hover fieldset': {
-              borderColor: '#B17F59',
+              borderColor: '#5C9EFF',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#B17F59',
-              boxShadow: '0 0 8px rgba(177, 127, 89, 0.5)',
+              borderColor: '#2FB8A0',
+              boxShadow: '0 0 8px rgba(47, 184, 160, 0.4)',
             },
           },
         },

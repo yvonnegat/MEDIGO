@@ -29,8 +29,8 @@ const HeroSection = () => {
             maxWidth: '1200px',
             padding: '40px',
             borderRadius: '20px',
-            background: 'linear-gradient(145deg, #EDE8DC, #C1CFA1)',
-            boxShadow: '6px 6px 12px #bebebe, -6px -6px 12px #ffffff',
+            background: 'linear-gradient(145deg, #E6F5EA, #FFFFFF)', // Background from theme (mint to white)
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)', // Soft card shadow from theme
             overflow: 'hidden',
           }}
           elevation={0}
@@ -70,10 +70,10 @@ const HeroSection = () => {
             <Typography 
               variant="h2"
               sx={{
-                fontFamily: 'Poppins, sans-serif',
-                fontWeight: 'bold',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 600,
                 fontSize: '3rem',
-                color: '#B17F59',
+                color: '#333333', // Text color from theme
                 mb: 2,
                 textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
                 '@media (max-width: 600px)': {
@@ -86,9 +86,9 @@ const HeroSection = () => {
             <Typography 
               variant="body1"
               sx={{
-                fontFamily: 'Lora, serif',
+                fontFamily: 'Inter, sans-serif',
                 fontSize: '1.25rem',
-                color: '#5C5C5C',
+                color: '#555555', // Secondary text color from theme
                 mb: 4,
                 '@media (max-width: 600px)': {
                   fontSize: '1rem',
@@ -102,16 +102,16 @@ const HeroSection = () => {
               to="/shop"
               variant="contained"
               sx={{
-                background: 'linear-gradient(145deg, #A5B68D, #C1CFA1)',
-                color: '#5C5C5C',
+                background: '#2FB8A0', // Primary color from theme
+                color: '#FFFFFF',
                 padding: '12px 24px',
                 fontSize: '1.125rem',
-                borderRadius: '50px',
-                boxShadow: '4px 4px 8px #a1a1a1, -4px -4px 8px #ffffff',
+                borderRadius: '12px', // Soft button corner from theme
+                boxShadow: '0 0 8px rgba(47, 184, 160, 0.4)', // Teal glow from theme
                 textTransform: 'none',
                 '&:hover': {
-                  background: 'linear-gradient(145deg, #C1CFA1, #A5B68D)',
-                  transform: 'scale(1.05)',
+                  background: '#5C9EFF', // Secondary color from theme for hover
+                  boxShadow: '0 0 8px rgba(92, 158, 255, 0.4)', // Blue glow on hover
                 },
                 '@media (max-width: 600px)': {
                   fontSize: '1rem',

@@ -94,6 +94,7 @@ const App = () => {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/:id" element={<CheckoutPage />}/>
           <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/" /> : <Signup />} />
           <Route path="/profile" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/login" />} />

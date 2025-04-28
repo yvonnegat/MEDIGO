@@ -15,12 +15,19 @@ import { auth } from '../firebaseConfig';
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
   const theme = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      setIsLoggedIn(!!user);
+      if (user) {
+        setIsLoggedIn(true);
+        setUserName(user.displayName || user.email.split('@')[0]); // fallback to email username if no displayName
+      } else {
+        setIsLoggedIn(false);
+        setUserName('');
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -69,17 +76,47 @@ const Header = () => {
           <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>mediGO</Link>
         </Typography>
 
-        {/* Cart & Logout */}
+        {/* Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton component={Link} to="/cart" color="primary" sx={{ ml: 2 }}>
+          {/* Submit Prescription Button */}
+          <Button
+            component={Link}
+            to="/submit-prescription"
+            variant="outlined"
+            color="primary"
+            sx={{ mr: 2, borderRadius: '12px' }}
+          >
+            Submit Prescription
+          </Button>
+
+          {/* Cart */}
+          <IconButton component={Link} to="/cart" color="primary" sx={{ ml: 1 }}>
             <ShoppingCartIcon />
           </IconButton>
+
+          {/* User section */}
           {isLoggedIn ? (
-            <Button variant="contained" color="secondary" onClick={handleLogout} sx={{ ml: 2 }}>
-              Logout
-            </Button>
+            <>
+              <Typography variant="body1" sx={{ ml: 2, color: theme.palette.text.primary }}>
+                {userName}
+              </Typography>
+              <Button 
+                variant="contained" 
+                color="secondary" 
+                onClick={handleLogout} 
+                sx={{ ml: 2 }}
+              >
+                Logout
+              </Button>
+            </>
           ) : (
-            <Button component={Link} to="/login" variant="contained" color="primary" sx={{ ml: 2 }}>
+            <Button 
+              component={Link} 
+              to="/login" 
+              variant="contained" 
+              color="primary" 
+              sx={{ ml: 2 }}
+            >
               Login
             </Button>
           )}

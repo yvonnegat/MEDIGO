@@ -37,46 +37,68 @@ const FeaturedMedicine = ({ categoryRefs }) => {
     const scrollContainer = scrollRefs.current[category];
     if (scrollContainer) {
       const scrollAmount = isMobile ? 200 : 300;
-      scrollContainer.scrollBy({ 
-        left: direction === 'left' ? -scrollAmount : scrollAmount, 
-        behavior: 'smooth' 
+      scrollContainer.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
       });
     }
   };
 
   return (
-    <Box sx={{ padding: '10px', maxWidth: '95%', margin: 'auto', background: '#EDE8DC', borderRadius: '20px', boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.1)' }}>
+    <Box
+      sx={{
+        padding: '20px',
+        maxWidth: '95%',
+        margin: 'auto',
+        background: theme.palette.background.default,
+        borderRadius: '20px',
+        boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.08)',
+      }}
+    >
       {categories.map(({ key, title }) => (
-        <Box key={key} ref={(el) => { if (el) categoryRefs.current[key] = el; }} sx={{
-          position: 'relative',
-          marginBottom: '30px',
-          padding: '15px',
-          background: '#C1CFA1',
-          borderRadius: '15px',
-          boxShadow: 'inset 0px 4px 8px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.3s ease-in-out',
-          '&:hover': { boxShadow: 'inset 0px 6px 12px rgba(0, 0, 0, 0.2)' }
-        }}>
-          <Typography variant={isMobile ? 'h6' : 'h5'} sx={{
-            fontWeight: 'bold',
-            marginBottom: '10px',
-            color: '#B17F59',
-            textAlign: 'center',
-            textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
-          }}>{title}</Typography>
+        <Box
+          key={key}
+          ref={(el) => { if (el) categoryRefs.current[key] = el; }}
+          sx={{
+            position: 'relative',
+            marginBottom: '40px',
+            padding: '20px',
+            background: theme.palette.background.paper,
+            borderRadius: '15px',
+            boxShadow: 'inset 0px 3px 6px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.1)',
+            }
+          }}
+        >
+          <Typography
+            variant={isMobile ? 'h6' : 'h5'}
+            sx={{
+              fontWeight: 'bold',
+              marginBottom: '15px',
+              color: theme.palette.primary.main,
+              textAlign: 'center',
+              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+            }}
+          >
+            {title}
+          </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
             {!isMobile && (
-              <IconButton 
-                onClick={() => scroll(key, 'left')} 
+              <IconButton
+                onClick={() => scroll(key, 'left')}
                 sx={{
                   position: 'absolute',
                   left: 0,
                   zIndex: 2,
-                  background: '#A5B68D',
-                  color: 'white',
-                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                  '&:hover': { background: '#B17F59' }
+                  background: theme.palette.secondary.main,
+                  color: '#ffffff',
+                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+                  '&:hover': {
+                    background: theme.palette.primary.main,
+                  }
                 }}
               >
                 <ArrowBackIos />
@@ -87,22 +109,25 @@ const FeaturedMedicine = ({ categoryRefs }) => {
               ref={(el) => { if (el) scrollRefs.current[key] = el; }}
               sx={{
                 display: 'flex',
-                gap: '10px',
+                gap: '16px',
                 overflowX: 'auto',
-                scrollbarWidth: 'none',
                 padding: '10px',
                 width: '100%',
                 scrollSnapType: 'x mandatory',
-                '&::-webkit-scrollbar': { display: 'none' }
+                scrollbarWidth: 'none',
+                '&::-webkit-scrollbar': { display: 'none' },
               }}
             >
               {featuredData[key]?.length > 0 ? (
                 featuredData[key].map(product => (
-                  <Box key={product.id} sx={{
-                    flex: '0 0 auto',
-                    minWidth: isMobile ? '80%' : '250px',
-                    scrollSnapAlign: 'start'
-                  }}>
+                  <Box
+                    key={product.id}
+                    sx={{
+                      flex: '0 0 auto',
+                      minWidth: isMobile ? '80%' : '250px',
+                      scrollSnapAlign: 'start',
+                    }}
+                  >
                     <ProductItem product={product} />
                   </Box>
                 ))
@@ -112,16 +137,18 @@ const FeaturedMedicine = ({ categoryRefs }) => {
             </Box>
 
             {!isMobile && (
-              <IconButton 
-                onClick={() => scroll(key, 'right')} 
+              <IconButton
+                onClick={() => scroll(key, 'right')}
                 sx={{
                   position: 'absolute',
                   right: 0,
                   zIndex: 2,
-                  background: '#A5B68D',
-                  color: 'white',
-                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                  '&:hover': { background: '#B17F59' }
+                  background: theme.palette.secondary.main,
+                  color: '#ffffff',
+                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+                  '&:hover': {
+                    background: theme.palette.primary.main,
+                  }
                 }}
               >
                 <ArrowForwardIos />

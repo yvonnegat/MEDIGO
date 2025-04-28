@@ -26,6 +26,8 @@ const CheckoutPage = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [openMpesaDialog, setOpenMpesaDialog] = useState(false);
+  
+  // Accessing the cart from Redux store
   const cart = useSelector((state) => state.cart);
 
   useEffect(() => {
@@ -102,6 +104,7 @@ const CheckoutPage = () => {
       setOpenSnackbar(true);
     }
   };
+
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
@@ -247,20 +250,26 @@ const CheckoutPage = () => {
               <Typography variant="h6" gutterBottom>
                 Order Summary
               </Typography>
-              {cart.map((item, index) => (
-                <div key={index} style={{ marginBottom: '15px' }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                      <img src={item.imageUrl} alt={item.title} style={{ width: '100%', borderRadius: '8px' }} />
+              {cart && cart.length > 0 ? (
+                cart.map((item, index) => (
+                  <div key={index} style={{ marginBottom: '15px' }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={4}>
+                        <img src={item.imageUrl} alt={item.title} style={{ width: '100%', borderRadius: '8px' }} />
+                      </Grid>
+                      <Grid item xs={8}>
+                        <Typography variant="body1">{item.title}</Typography>
+                        <Typography variant="body2" color="textSecondary">Quantity: {item.quantity}</Typography>
+                        <Typography variant="body2" color="textSecondary">Price: Ksh {item.price}</Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={8}>
-                      <Typography variant="body1">{item.title}</Typography>
-                      <Typography variant="body2" color="textSecondary">Quantity: {item.quantity}</Typography>
-                      <Typography variant="body2" color="textSecondary">Price: Ksh {item.price}</Typography>
-                    </Grid>
-                  </Grid>
-                </div>
-              ))}
+                  </div>
+                ))
+              ) : (
+                <Typography variant="body1" color="textSecondary">
+                  Your cart is empty.
+                </Typography>
+              )}
               <Divider style={{ margin: '20px 0' }} />
               <Typography variant="h6" gutterBottom>Total: Ksh {calculateTotalPrice()}</Typography>
               <Button
@@ -285,43 +294,19 @@ const CheckoutPage = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Dialog
-  open={openMpesaDialog}
-  onClose={handleCloseMpesaDialog}
-  aria-labelledby="mpesa-dialog-title"
->
-  <DialogTitle id="mpesa-dialog-title" sx={{ color: '#4CAF50' }}>M-Pesa Payment</DialogTitle>
-  <DialogContent>
-    <Typography variant="body1" sx={{ color: '#4CAF50' }} gutterBottom>
-      Please follow the M-Pesa payment instructions provided at checkout.
-    </Typography>
-    <TextField
-      autoFocus
-      margin="dense"
-      id="phone"
-      label="Phone Number"
-      type="text"
-      fullWidth
-      value={paymentInfo.phone}
-      onChange={(e) => setPaymentInfo({ ...paymentInfo, phone: e.target.value })}
-      sx={{ marginBottom: 2 }}
-    />
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseMpesaDialog} sx={{ color: '#4CAF50' }}>
-      Cancel
-    </Button>
-    <Button
-      onClick={() => {
-        handleCloseMpesaDialog();
-        placeOrder();
-      }}
-      sx={{ color: '#4CAF50' }}
-    >
-      Pay Now
-    </Button>
-  </DialogActions>
-</Dialog>
+      <Dialog open={openMpesaDialog} onClose={handleCloseMpesaDialog}>
+        <DialogTitle>M-Pesa Payment Instructions</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Please follow the M-Pesa payment instructions provided at checkout.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseMpesaDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

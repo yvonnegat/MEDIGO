@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebaseConfig';
 import { doc, getDoc, collection, query, getDocs } from 'firebase/firestore';
 import { 
@@ -14,6 +14,7 @@ import Footer from './Footer';
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -25,6 +26,21 @@ const ProductDetails = () => {
       dispatch(addToCart(product));
       setSnackbarMessage(`${product.name} added to cart!`);
       setSnackbarOpen(true);
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (product) {
+      const serializableProduct = {
+        id: product.id,
+        title: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        description: product.description,
+      };
+  
+      localStorage.setItem("temporaryCart", JSON.stringify([serializableProduct]));
+      navigate("/checkout");
     }
   };
 
@@ -71,18 +87,16 @@ const ProductDetails = () => {
   }
 
   return (
-    <div style={{ backgroundColor: '#EDE8DC' }}>
+    <div style={{ backgroundColor: '#E6F5EA' }}>
       <Header />
       <Container maxWidth="md">
         <Box sx={{ padding: 4 }}>
           <Card sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            boxShadow: '6px 6px 12px #C1CFA1, -6px -6px 12px #ffffff', 
-            borderRadius: '20px',
-            backgroundColor: '#C1CFA1', 
-            color: '#3A3A3A',
-            overflow: 'hidden',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)', 
+            borderRadius: '15px',
+            backgroundColor: '#FFFFFF',
             padding: 3
           }}>
             {product.imageUrl ? (
@@ -94,7 +108,7 @@ const ProductDetails = () => {
                   height: 350, 
                   objectFit: 'cover',
                   borderRadius: '12px',
-                  boxShadow: 'inset 4px 4px 8px #A5B68D, inset -4px -4px 8px #ffffff'
+                  boxShadow: 'inset 4px 4px 8px rgba(47, 184, 160, 0.4), inset -4px -4px 8px #ffffff'
                 }}
               />
             ) : (
@@ -115,37 +129,37 @@ const ProductDetails = () => {
               <Typography 
                 variant="h4" 
                 gutterBottom
-                sx={{ fontWeight: 'bold', color: '#B17F59' }}
+                sx={{ fontWeight: 700, color: '#333333' }}
               >
                 {product.name || 'No Name'}
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" paragraph sx={{ color: '#555555' }}>
                 {product.description || 'No Description'}
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ color: '#555555' }}>
                 Manufacturer: <span style={{ fontWeight: 'bold' }}>{product.manufacturerName || 'N/A'}</span>
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ color: '#555555' }}>
                 Expiry Date: <span style={{ fontWeight: 'bold' }}>{product.expiryDate || 'N/A'}</span>
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ color: '#555555' }}>
                 Category: <span style={{ fontWeight: 'bold' }}>{product.category || 'N/A'}</span>
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ color: '#555555' }}>
                 Size: <span style={{ fontWeight: 'bold' }}>{product.size || 'N/A'}</span>
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ color: '#555555' }}>
                 Stock Number: <span style={{ fontWeight: 'bold' }}>{product.stockQuantity || 'N/A'}</span>
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" sx={{ color: '#555555' }}>
                 Availability: <span style={{ fontWeight: 'bold' }}>{product.availability ? 'In Stock' : 'Out of Stock'}</span>
               </Typography>
               <Typography 
                 variant="h5" 
                 sx={{ 
                   marginTop: 2, 
-                  color: '#A5B68D', 
-                  fontWeight: 'bold' 
+                  color: '#2FB8A0', 
+                  fontWeight: 600 
                 }}
               >
                 KSh {product.price || '0.00'}
@@ -158,21 +172,39 @@ const ProductDetails = () => {
                   padding: 1.5, 
                   fontSize: '1.1rem',
                   borderRadius: '12px',
-                  backgroundColor: '#B17F59',
-                  boxShadow: '4px 4px 8px #A5B68D, -4px -4px 8px #ffffff',
+                  backgroundColor: '#2FB8A0',
+                  boxShadow: '0 0 8px rgba(47, 184, 160, 0.4)',
                   '&:hover': {
-                    backgroundColor: '#A5B68D'
+                    backgroundColor: '#5C9EFF'
                   }
                 }}
                 onClick={handleAddToCart}
               >
                 Add to Cart
               </Button>
+              <Button
+                variant="contained"
+                sx={{ 
+                  marginTop: 2, 
+                  width: '100%', 
+                  padding: 1.5, 
+                  fontSize: '1.1rem',
+                  borderRadius: '12px',
+                  backgroundColor: '#5C9EFF',
+                  boxShadow: '0 0 8px rgba(92, 158, 255, 0.4)',
+                  '&:hover': {
+                    backgroundColor: '#2FB8A0'
+                  }
+                }}
+                onClick={handleBuyNow}
+              >
+                Buy Now
+              </Button>
             </CardContent>
           </Card>
 
           <Box sx={{ marginTop: 4 }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#B17F59' }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#2FB8A0' }}>
               OTHER PRODUCTS
             </Typography>
             <Grid container spacing={3}>
