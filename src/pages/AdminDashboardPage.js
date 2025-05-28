@@ -28,9 +28,10 @@ import {
   Star as StarIcon,
   Search as SearchIcon,
   MedicalServices as PrescriptionIcon,
+  Chat as ChatIcon,
 } from '@mui/icons-material';
 import { auth, db } from '../firebaseConfig';
-import { doc, getDoc, collection, onSnapshot, query, where } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import ProductUpload from '../components/ProductUpload';
 import ProductList from '../components/ProductList';
@@ -48,6 +49,7 @@ const AdminDashboardPage = () => {
   const [orders, setOrders] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
   const [pendingPrescriptions, setPendingPrescriptions] = useState(0);
+  const [pendingChats, setPendingChats] = useState(0);
   const [tabValue, setTabValue] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,6 +73,7 @@ const AdminDashboardPage = () => {
           fetchProducts(adminPharmacyId);
           fetchOrders(adminPharmacyId);
           fetchPrescriptions(adminPharmacyId);
+          fetchPendingChats(adminPharmacyId);
         }
       } else {
         navigate('/');
@@ -94,12 +97,29 @@ const AdminDashboardPage = () => {
 
   const fetchOrders = (adminPharmacyId) => {
     const ordersRef = collection(db, 'orders');
-    const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
-      const orderList = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((order) => order.pharmacyId === adminPharmacyId);
+    const ordersQuery = query(ordersRef, where('pharmacyId', '==', adminPharmacyId));
+  
+    const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+      const orderList = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      console.log("Filtered orders:", orderList);
       setOrders(orderList);
     });
+  
+    return unsubscribe;
+  };
+  
+  const fetchPendingChats = (adminPharmacyId) => {
+    const chatSummariesRef = collection(db, 'chatSummaries');
+    const chatQuery = query(chatSummariesRef, where('pharmacyId', '==', adminPharmacyId));
+    
+    const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
+      const pendingCount = snapshot.docs.filter(doc => 
+        doc.data().unreadByPharmacy === true
+      ).length;
+      
+      setPendingChats(pendingCount);
+    });
+    
     return unsubscribe;
   };
 
@@ -129,6 +149,10 @@ const AdminDashboardPage = () => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+  
+  const handleNavigateToChats = () => {
+    navigate('/admin/chats');
   };
 
   const filteredProducts = products.filter((product) =>
@@ -193,6 +217,38 @@ const AdminDashboardPage = () => {
         </Tabs>
         <Divider sx={{ mb: 3 }} />
 
+        {/* Customer Chat Quick Access */}
+        <Box
+          onClick={handleNavigateToChats}
+          sx={{
+            position: 'fixed',
+            bottom: 20,
+            right: 20,
+            zIndex: 900,
+            bgcolor: '#2FB8A0',
+            color: 'white',
+            borderRadius: '50%',
+            width: 60,
+            height: 60,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 3,
+            cursor: 'pointer',
+            '&:hover': {
+              bgcolor: '#5C9EFF',
+            }
+          }}
+        >
+          <Badge
+            badgeContent={pendingChats}
+            color="error"
+            invisible={pendingChats === 0}
+          >
+            <ChatIcon fontSize="large" />
+          </Badge>
+        </Box>
+
         {tabValue === 0 && (
           <Box>
             <Box sx={{ background: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.dark})`, color: 'white', p: 3, borderRadius: 2, mb: 4 }}>
@@ -231,82 +287,172 @@ const AdminDashboardPage = () => {
               </Grid>
               <Grid item xs={12} md={4} lg={3}>
                 <Paper elevation={3} sx={{ p: 2 }}>
-                  <AddIcon color="warning" sx={{ fontSize: 30 }} />
-                  <Typography variant="subtitle2" sx={{ mt: 1 }}>Out of Stock</Typography>
-                  <Typography variant="h5" fontWeight="bold">{outOfStockCount}</Typography>
+                  <ChatIcon color="info" sx={{ fontSize: 30 }} />
+                  <Typography variant="subtitle2" sx={{ mt: 1 }}>Customer Chats</Typography>
+                  <Typography variant="h5" fontWeight="bold">{pendingChats}</Typography>
+                  {pendingChats > 0 && (
+                    <Chip 
+                      label="Unread messages" 
+                      size="small" 
+                      color="error" 
+                      sx={{ mt: 1 }} 
+                    />
+                  )}
                 </Paper>
               </Grid>
             </Grid>
 
-            {featuredProduct && (
-              <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <StarIcon color="secondary" sx={{ mr: 1 }} />
-                  <Typography variant="h6" fontWeight="bold">Featured Product</Typography>
-                </Box>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} md={4}>
-                    <Typography variant="h5">{featuredProduct.name}</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{featuredProduct.category}</Typography>
-                    <Chip 
-                      label={`In Stock: ${featuredProduct.stock}`} 
-                      color={featuredProduct.stock > 10 ? 'success' : 'warning'} 
-                      variant="outlined" 
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={8}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ flex: 1, mr: 2 }}>
-                        <Typography variant="body2" color="text.secondary" gutterBottom>Stock Level</Typography>
-                        <LinearProgress 
-                          variant="determinate" 
-                          value={Math.min((featuredProduct.stock / 100) * 100, 100)} 
-                          sx={{ height: 10, borderRadius: 5 }}
-                        />
-                      </Box>
-                      <Typography variant="h6">{featuredProduct.price} USD</Typography>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={3} sx={{ p: 3 }}>
+                  <Typography variant="h6" fontWeight="medium" mb={2}>
+                    Inventory Status
+                  </Typography>
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <Box flex={1}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Out of Stock Items
+                      </Typography>
+                      <LinearProgress 
+                        variant="determinate" 
+                        value={products.length > 0 ? (outOfStockCount / products.length) * 100 : 0} 
+                        color="error"
+                        sx={{ height: 8, borderRadius: 4 }}
+                      />
                     </Box>
-                  </Grid>
-                </Grid>
-              </Paper>
-            )}
+                    <Typography variant="h6" color="error" ml={2}>
+                      {outOfStockCount}
+                    </Typography>
+                  </Box>
+                  {featuredProduct && (
+                    <Card variant="outlined" sx={{ mt: 2 }}>
+                      <CardHeader 
+                        title="Featured Product" 
+                        subheader="Highest stock item"
+                        avatar={<StarIcon color="warning" />}
+                      />
+                      <CardContent>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          {featuredProduct.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Stock: {featuredProduct.stock} units
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Price: ${featuredProduct.price}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={3} sx={{ p: 3 }}>
+                  <Typography variant="h6" fontWeight="medium" mb={2}>
+                    Recent Orders
+                  </Typography>
+                  {orders.length > 0 ? (
+                    orders.slice(0, 3).map((order) => (
+                      <Paper key={order.id} variant="outlined" sx={{ p: 2, mb: 2 }}>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                          <Box>
+                            <Typography variant="subtitle2" fontWeight="bold">
+                              Order #{order.id.slice(0, 6)}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {order.customerName || 'Customer'}
+                            </Typography>
+                          </Box>
+                          <Chip 
+                            label={order.status || 'Processing'} 
+                            color={
+                              order.status === 'completed' ? 'success' : 
+                              order.status === 'cancelled' ? 'error' : 'warning'
+                            } 
+                            size="small" 
+                          />
+                        </Box>
+                        <Typography variant="body2" mt={1}>
+                          Total: ${order.totalAmount || '0.00'}
+                        </Typography>
+                      </Paper>
+                    ))
+                  ) : (
+                    <Typography variant="body1" color="text.secondary" textAlign="center" py={4}>
+                      No orders yet
+                    </Typography>
+                  )}
+                </Paper>
+              </Grid>
+            </Grid>
           </Box>
         )}
 
         {tabValue === 1 && (
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>Add New Product</Typography>
-            <ProductUpload onProductUploaded={handleProductUpdated} />
+          <Box>
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight="medium" mb={3}>
+                <AddIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                Add New Product
+              </Typography>
+              <ProductUpload pharmacyId={pharmacyId} onProductAdded={handleProductUpdated} />
+            </Paper>
           </Box>
         )}
 
         {tabValue === 2 && (
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>Product Inventory</Typography>
-            <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
-              <InputBase 
-                placeholder="Search products..." 
-                value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)} 
-                sx={{ ml: 1, flex: 1, border: '1px solid #ccc', px: 2, py: 1, borderRadius: 2 }} 
+          <Box>
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
+                <Typography variant="h6" fontWeight="medium">
+                  <InventoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                  Inventory Management
+                </Typography>
+                <Paper
+                  component="form"
+                  sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+                >
+                  <InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    placeholder="Search products"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                    <SearchIcon />
+                  </IconButton>
+                </Paper>
+              </Box>
+              <ProductList 
+                products={filteredProducts} 
+                isAdmin={true} 
+                onProductUpdated={handleProductUpdated}
               />
-              <IconButton type="button"><SearchIcon /></IconButton>
-            </Box>
-            <ProductList pharmacyId={pharmacyId} filteredProducts={filteredProducts} />
+            </Paper>
           </Box>
         )}
 
         {tabValue === 3 && (
           <Box>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>Recent Orders</Typography>
-            <AdminOrders pharmacyId={pharmacyId} />
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight="medium" mb={3}>
+                <OrdersIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                Orders Management
+              </Typography>
+              <AdminOrders orders={orders} />
+            </Paper>
           </Box>
         )}
 
         {tabValue === 4 && (
           <Box>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>Prescription Management</Typography>
-            <AdminPrescriptions pharmacyId={pharmacyId} />
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight="medium" mb={3}>
+                <PrescriptionIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                Prescription Management
+              </Typography>
+              <AdminPrescriptions prescriptions={prescriptions} />
+            </Paper>
           </Box>
         )}
       </Container>

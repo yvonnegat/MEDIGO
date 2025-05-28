@@ -67,7 +67,7 @@ const SubmitPrescription = () => {
           pharmacyList.push({
             id: doc.data().pharmacyId,
             name: doc.data().name,
-            address: doc.data().address || 'Address not available'
+            pharmacyLocation: doc.data().pharmacyLocation || 'Address not available'
           });
         }
       });
@@ -287,7 +287,7 @@ const SubmitPrescription = () => {
                   ) : (
                     pharmacies.map((pharmacy) => (
                       <MenuItem key={pharmacy.id} value={pharmacy.id}>
-                        {pharmacy.name} - {pharmacy.address}
+                        {pharmacy.name} - {pharmacy.pharmacyLocation}
                       </MenuItem>
                     ))
                   )}

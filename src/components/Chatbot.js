@@ -71,7 +71,7 @@ const Chatbot = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer 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`,
+            'Authorization': `Bearer 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`,
             'Content-Type': 'application/json'
           }
         }

@@ -19,6 +19,7 @@ import SubmitPrescription from './components/SubmitPrescription';
 import PrescriptionHistory from './components/PrescriptionHistory';
 
 import Chatbot from './components/Chatbot';
+import PharmacyChatPage from './components/PharmacyChatPage';
 
 const App = () => {
   const [isFirstVisit, setIsFirstVisit] = useState(false);
@@ -104,6 +105,7 @@ const App = () => {
           <Route path='/order-history' element={<OrderHistory/>}/>
           <Route path="/submit-prescription" element={<SubmitPrescription />} />
           <Route path="/prescriptions" element={<PrescriptionHistory />} />
+          <Route path="/admin/chats" element={<PharmacyChatPage/>} />
         </Routes>
         <Box sx={{ position: 'fixed', bottom: 0, right: 0, zIndex: 1300 }}>
           <Chatbot />

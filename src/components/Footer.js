@@ -8,7 +8,7 @@ const Footer = () => {
     <Box py={3} bgcolor={theme.palette.primary.main} color={theme.palette.common.white}>
       <Container>
         <Typography variant="body2" align="center">
-          &copy; {new Date().getFullYear()} My Painting Shop. All rights reserved.
+          &copy; {new Date().getFullYear()} Medigo. All rights reserved.
         </Typography>
       </Container>
     </Box>

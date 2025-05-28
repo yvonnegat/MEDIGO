@@ -111,7 +111,7 @@ const CartPage = () => {
                           {item.description}
                         </Typography>
                       </TableCell>
-                      <TableCell>${item.price}</TableCell>
+                      <TableCell>ksh{item.price}</TableCell>
                       <TableCell>
                       <TextField
                         type="number"
@@ -134,7 +134,7 @@ const CartPage = () => {
             </TableContainer>
             <div style={{ marginTop: '20px', textAlign: 'right' }}>
               <Typography variant="h6" style={{ color: theme.palette.text.primary }}>
-                Subtotal: ${calculateTotalPrice().toFixed(2)}
+                Subtotal: ksh{calculateTotalPrice().toFixed(2)}
               </Typography>
               <Button
                 variant="contained"

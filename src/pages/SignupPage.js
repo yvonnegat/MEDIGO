@@ -15,7 +15,7 @@ import {
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
-import { v4 as uuidv4 } from "uuid"; // Import UUID library
+import { v4 as uuidv4 } from "uuid";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +25,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     role: "user", // Default role
+    pharmacyLocation: "", // New field
   });
 
   const [message, setMessage] = useState("");
@@ -35,7 +36,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, phone, password, confirmPassword, role } = formData;
+    const { name, email, phone, password, confirmPassword, role, pharmacyLocation } = formData;
 
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
@@ -55,7 +56,8 @@ const Signup = () => {
         email,
         phone,
         role,
-        pharmacyId, // Store pharmacy ID if admin
+        pharmacyId,
+        ...(role === "admin" && { pharmacyLocation }), // Add location if admin
       });
 
       // Send email verification
@@ -113,11 +115,31 @@ const Signup = () => {
           {/* Role Selection */}
           <FormControl fullWidth margin="normal">
             <InputLabel id="role-label">Sign up as</InputLabel>
-            <Select labelId="role-label" id="role" name="role" value={formData.role} onChange={handleChange}>
+            <Select
+              labelId="role-label"
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="admin">Pharmacy (Admin)</MenuItem>
             </Select>
           </FormControl>
+
+          {/* Pharmacy Location (Only for Admins) */}
+          {formData.role === "admin" && (
+            <TextField
+              onChange={handleChange}
+              value={formData.pharmacyLocation}
+              margin="normal"
+              required
+              fullWidth
+              name="pharmacyLocation"
+              label="Pharmacy Location"
+              id="pharmacyLocation"
+            />
+          )}
 
           <TextField
             onChange={handleChange}
@@ -147,7 +169,12 @@ const Signup = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, backgroundColor: "primary.main", "&:hover": { backgroundColor: "secondary.main" } }}
+            sx={{
+              mt: 3,
+              mb: 2,
+              backgroundColor: "primary.main",
+              "&:hover": { backgroundColor: "secondary.main" },
+            }}
           >
             Sign Up
           </Button>

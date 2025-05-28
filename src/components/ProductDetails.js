@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/stores'; 
 import Header from './Header';
 import Footer from './Footer';
+import LiveChatComponent from '../components/LiveChatComponent';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -50,7 +51,10 @@ const ProductDetails = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setProduct(docSnap.data());
+        setProduct({
+          id: id,
+          ...docSnap.data()
+        });
         fetchAllProducts();
       } else {
         console.error('No such document!');
@@ -154,6 +158,9 @@ const ProductDetails = () => {
               <Typography variant="body1" sx={{ color: '#555555' }}>
                 Availability: <span style={{ fontWeight: 'bold' }}>{product.availability ? 'In Stock' : 'Out of Stock'}</span>
               </Typography>
+              <Typography variant="body1" sx={{ color: '#555555' }}>
+                Sold by: <span style={{ fontWeight: 'bold' }}>{product.pharmacyName || 'Pharmacy'}</span>
+              </Typography>
               <Typography 
                 variant="h5" 
                 sx={{ 
@@ -231,6 +238,14 @@ const ProductDetails = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      
+      {/* Live Chat Component */}
+      <LiveChatComponent 
+        productId={id} 
+        pharmacyId={product.pharmacyId} 
+        productName={product.name} 
+      />
+      
       <Footer />
     </div>
   );
