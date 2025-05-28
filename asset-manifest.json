@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/MEDIGO/static/js/main.1781440a.js",
+    "main.js": "/MEDIGO/static/js/main.057df337.js",
     "static/media/3d-capsule (2).png": "/MEDIGO/static/media/3d-capsule (2).75579d00a8d63c1344e0.png",
     "index.html": "/MEDIGO/index.html",
-    "main.1781440a.js.map": "/MEDIGO/static/js/main.1781440a.js.map"
+    "main.057df337.js.map": "/MEDIGO/static/js/main.057df337.js.map"
   },
   "entrypoints": [
-    "static/js/main.1781440a.js"
+    "static/js/main.057df337.js"
   ]
 }
