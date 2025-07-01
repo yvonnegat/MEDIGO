@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, CssBaseline, GlobalStyles, CircularProgress, Box } from '@mui/material';
 import { auth } from './firebaseConfig';
 import { onAuthStateChanged } from 'firebase/auth';
+
 import HomePage from './pages/Homepage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckOutPage';
@@ -17,7 +18,6 @@ import theme from './theme';
 import OrderHistory from './pages/OrderHistory';
 import SubmitPrescription from './components/SubmitPrescription';
 import PrescriptionHistory from './components/PrescriptionHistory';
-
 import Chatbot from './components/Chatbot';
 import PharmacyChatPage from './components/PharmacyChatPage';
 
@@ -89,28 +89,29 @@ const App = () => {
           },
         }}
       />
-      <Router>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <Routes>
           <Route path="/" element={isFirstVisit && !isLoggedIn ? <Signup /> : <HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/checkout/:id" element={<CheckoutPage />}/>
+          <Route path="/checkout/:id" element={<CheckoutPage />} />
           <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
           <Route path="/signup" element={isLoggedIn ? <Navigate to="/" /> : <Signup />} />
           <Route path="/profile" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/admin" element={isLoggedIn ? <AdminDashboardPage /> : <Navigate to="/login" />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path='/order-history' element={<OrderHistory/>}/>
+          <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/submit-prescription" element={<SubmitPrescription />} />
           <Route path="/prescriptions" element={<PrescriptionHistory />} />
-          <Route path="/admin/chats" element={<PharmacyChatPage/>} />
+          <Route path="/admin/chats" element={<PharmacyChatPage />} />
         </Routes>
+
         <Box sx={{ position: 'fixed', bottom: 0, right: 0, zIndex: 1300 }}>
           <Chatbot />
         </Box>
-      </Router>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };
