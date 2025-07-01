@@ -20,7 +20,6 @@ jobs:
 
     - name: 📦 Install dependencies
       run: |
-        cd frontend
         npm install
 
     - name: 🚀 Deploy to GitHub Pages
